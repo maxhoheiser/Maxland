@@ -418,13 +418,16 @@ if settings_obj.run_session:
         )
 
         # create pygame daemon
-        threading.Thread(target=stimulus_game.run_game, daemon=True).start()
+        pa = threading.Thread(target=stimulus_game.run_game, daemon=True)
+        pa.start()
 
         # send & run state machine
         bpod.send_state_machine(sma)
 
         # wiat until state machine finished
-        if not bpod.run_state_machine(sma):  # Locks until state machine 'exit' is reached
+        if not bpod.run_state_machine(sma):
+            # Locks until state machine 'exit' is reached
+            pa.terminate()
             break
 
         # post trial cleanup
